@@ -35,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DapperMapping\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
