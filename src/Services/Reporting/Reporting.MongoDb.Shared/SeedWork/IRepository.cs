@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reporting.MongoDb.Repositories
+namespace Reporting.MongoDb.Shared
 {
     public interface IRepository<TEntity> : IDisposable where TEntity : class, IAggregateRoot
     {

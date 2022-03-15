@@ -6,7 +6,7 @@ using Contacting.Domain.SeedWork;
 using Contacting.Domain.Events;
 using Contacting.Domain.Shared.Persons;
 
-namespace Contacting.Domain.Auctions
+namespace Contacting.Dto.Persons
 {
     public record PersonContactDto
     {

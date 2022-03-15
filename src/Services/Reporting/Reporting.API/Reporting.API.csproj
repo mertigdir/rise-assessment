@@ -35,6 +35,7 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Utility\Utility.csproj" />
     <ProjectReference Include="..\Reporting.Application.Shared\Reporting.Application.Shared.csproj" />
     <ProjectReference Include="..\Reporting.Application\Reporting.Application.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
@@ -42,6 +43,7 @@
     <ProjectReference Include="..\Reporting.Core\Reporting.Core.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\Reporting.MongoDb.Shared\Reporting.MongoDb.Shared.csproj" />
     <ProjectReference Include="..\Reporting.MongoDb\Reporting.MongoDb.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>

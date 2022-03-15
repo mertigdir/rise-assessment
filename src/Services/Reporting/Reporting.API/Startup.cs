@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Auctioning.API.Infrastructure.AutofacModules;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Reporting.API.Infrastructure.Filters;
@@ -30,6 +29,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Reporting.MongoDb.Shared;
+using Reporting.API.Infrastructure.AutofacModules;
 
 namespace Reporting.API
 {
@@ -60,6 +61,7 @@ namespace Reporting.API
 
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
+            containerBuilder.RegisterModule(new ApplicationModule());
             containerBuilder.RegisterModule(new MediatorModule());
 
             var container = containerBuilder.Build();

@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Reporting.Core.Shared\Reporting.Core.Shared.csproj" />
     <ProjectReference Include="..\Reporting.MongoDb.Shared\Reporting.MongoDb.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Services\" />
+    <Folder Include="Reports\Events\" />
   </ItemGroup>
 </Project>

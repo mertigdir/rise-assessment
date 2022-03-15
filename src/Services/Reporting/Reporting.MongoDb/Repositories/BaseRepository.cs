@@ -5,15 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Reporting.MongoDb.Shared;
 
 namespace Reporting.MongoDb.Repositories
 {
-    public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IAggregateRoot
+    public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IAggregateRoot
     {
         protected readonly IReportingDbContext Context;
         protected IMongoCollection<TEntity> DbSet;
 
-        protected BaseRepository(IReportingDbContext context)
+        public BaseRepository(IReportingDbContext context)
         {
             Context = context;
 

@@ -8,9 +8,9 @@ using System.Text;
 
 namespace Contacting.Application.Validations
 {
-    public class CreateAuctionCommandValidator : AbstractValidator<CreatePersonCommand>
+    public class CreatePersonCommandValidator : AbstractValidator<CreatePersonCommand>
     {
-        public CreateAuctionCommandValidator(ILogger<CreateAuctionCommandValidator> logger)
+        public CreatePersonCommandValidator(ILogger<CreatePersonCommandValidator> logger)
         {
             RuleFor(command => command.Name)
                 .NotEmpty()

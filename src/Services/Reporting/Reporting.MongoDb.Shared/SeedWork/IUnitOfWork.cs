@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Reporting.MongoDb;
 
-namespace Reporting.Core
+namespace Reporting.MongoDb.Shared
 {
     public interface IUnitOfWork : IDisposable
     {

@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Reflection;
-using Auctioning.Application.DomainEventHandlers.Test;
 using Autofac;
 using MediatR;
+using Reporting.Application.DomainEventHandlers.Test;
 
-namespace Auctioning.API.Infrastructure.AutofacModules
+namespace Reporting.API.Infrastructure.AutofacModules
 {
     public class MediatorModule : Autofac.Module
     {

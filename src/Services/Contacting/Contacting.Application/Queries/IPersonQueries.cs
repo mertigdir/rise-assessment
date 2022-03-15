@@ -1,4 +1,4 @@
-﻿using Contacting.Dto.Auctions;
+﻿using Contacting.Dto.Persons;
 using System;
 using System.Collections.Generic;
 using System.Text;

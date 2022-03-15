@@ -1,4 +1,4 @@
-﻿AuctionMigrations --->
+﻿ContactingMigrations --->
 
 select Contacting.API 
 select Contacting.API from package console

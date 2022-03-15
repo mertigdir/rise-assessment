@@ -18,5 +18,6 @@
   <ItemGroup>
     <Folder Include="IntegrationEvents\EventHandling\" />
     <Folder Include="IntegrationEvents\Events\" />
+    <Folder Include="Reports\DomainEventHandlers\" />
   </ItemGroup>
 </Project>

@@ -27,7 +27,7 @@ namespace Contacting.API.Infrastructure.AutofacModules
 
             // Register the Command's Validators (Validators based on FluentValidation library)
             builder
-                .RegisterAssemblyTypes(typeof(CreateAuctionCommandValidator).GetTypeInfo().Assembly)
+                .RegisterAssemblyTypes(typeof(CreatePersonCommandValidator).GetTypeInfo().Assembly)
                 .Where(t => t.IsClosedTypeOf(typeof(IValidator<>)))
                 .AsImplementedInterfaces();
 

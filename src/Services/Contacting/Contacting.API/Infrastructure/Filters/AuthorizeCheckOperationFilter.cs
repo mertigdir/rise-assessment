@@ -28,7 +28,7 @@ namespace Contacting.API.Infrastructure.Filters
                 {
                     new OpenApiSecurityRequirement
                     {
-                        [ oAuthScheme ] = new [] { "auctioningapi" }
+                        [ oAuthScheme ] = new [] { "contactingapi" }
                     }
                 };
         }

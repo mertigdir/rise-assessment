@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Reporting.Core;
+using Reporting.MongoDb.Shared;
 
 namespace Reporting.MongoDb
 {

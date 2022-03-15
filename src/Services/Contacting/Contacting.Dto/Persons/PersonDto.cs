@@ -1,11 +1,10 @@
-﻿using Contacting.Domain.Auctions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contacting.Dto.Auctions
+namespace Contacting.Dto.Persons
 {
     public record PersonDto
     {

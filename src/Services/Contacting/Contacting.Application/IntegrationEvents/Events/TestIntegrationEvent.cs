@@ -1,6 +1,4 @@
-﻿using Contacting.Domain.Auctions;
-using Contacting.Dto.Auctions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Reporting.Core.Events
+namespace Reporting.Core.Tests
 {
     public class TestDomainEvent : INotification
     {
