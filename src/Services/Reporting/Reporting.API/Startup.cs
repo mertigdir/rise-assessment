@@ -1,35 +1,37 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Contacting.API.Infrastructure.AutofacModules;
-using Contacting.API.Infrastructure.Filters;
-using Contacting.Application.IntegrationEvents;
-using Contacting.Infrastructure;
+using System.Threading.Tasks;
+using Auctioning.API.Infrastructure.AutofacModules;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Reporting.API.Infrastructure.Filters;
+using Reporting.API.Infrastructure.Middlewares;
+using Reporting.Application.IntegrationEvents;
+using Reporting.Core;
+using Reporting.Core.Shared;
+using Reporting.MongoDb;
+using Reporting.MongoDb.Configuration;
+using Reporting.MongoDb.Repositories;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Contacting.Domain.Shared;
-using Contacting.Application.Mapper;
-using Utility;
 
-namespace Contacting.API
+namespace Reporting.API
 {
     public class Startup
     {
@@ -46,38 +48,32 @@ namespace Contacting.API
         {
             services
                .AddAppInsight(Configuration)
+               .AddGrpc().Services
                .AddCustomMVC(Configuration)
                .AddCustomDbContext(Configuration)
-               .AddIntegrationEventHandler()
                .AddCap(Configuration)
                .AddCustomSwagger(Configuration)
                .AddCustomOptions(Configuration)
                .AddIntegrationServices(Configuration)
                .AddCustomHealthCheck(Configuration)
-               .AddCustomAuthentication(Configuration)
-               .AddCustomAutoMapper(Configuration);
-
+               .AddCustomAuthentication(Configuration);
 
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
-
-            containerBuilder
-                .RegisterModule(new UtilityModule())
-                .RegisterModule(new ApplicationModule(Configuration["ConnectionString"]))
-                .RegisterModule(new MediatorModule());
-
+            containerBuilder.RegisterModule(new MediatorModule());
 
             var container = containerBuilder.Build();
 
             return new AutofacServiceProvider(container);
         }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(
-                Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot"))
+               Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot"))
             });
 
             var pathBase = Configuration["PATH_BASE"];
@@ -89,7 +85,11 @@ namespace Contacting.API
 
             app.UseRouting();
             app.UseCors("CorsPolicy");
-            ConfigureAuth(app);
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseDbTransaction();
 
             app.UseEndpoints(endpoints =>
             {
@@ -106,28 +106,13 @@ namespace Contacting.API
                 });
             });
 
-            SetServerConfiguration(app);
-
             app.UseSwagger()
              .UseSwaggerUI(c =>
              {
-                 c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Contacting.API V1");
-                 c.OAuthClientId("contactingswaggerui");
-                 c.OAuthAppName("Contacting Swagger UI");
+                 c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Reporting.API V1");
+                 c.OAuthClientId("reportingswaggerui");
+                 c.OAuthAppName("Reporting Swagger UI");
              });
-
-        }
-
-        protected virtual void ConfigureAuth(IApplicationBuilder app)
-        {
-            app.UseAuthentication();
-            app.UseAuthorization();
-        }
-        protected virtual void SetServerConfiguration(IApplicationBuilder app)
-        {
-            var op = app.ApplicationServices.GetServices<IOptions<AppSettings>>().First();
-            SettingOperations.Initializer(op.Value);
-            op.Value.ServiceName = Program.AppName;
         }
     }
 
@@ -139,16 +124,16 @@ namespace Contacting.API
 
             return services;
         }
+
         public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .AddControllers(options =>
                 {
-                    //options.Filters.Add(typeof(ModelStateFeatureFilter));
                     options.OutputFormatters.RemoveType<StringOutputFormatter>();
                     options.OutputFormatters.RemoveType(typeof(HttpNoContentOutputFormatter));
                 })
-                .AddControllersAsServices() // Bu olmazsa controllerlarda property injection Ã§alÄ±ÅŸmÄ±yor !!
+                .AddControllersAsServices() // Bu olmazsa controllerlarda property injection çalýþmýyor !!
                 .AddNewtonsoftJson();
 
             services.AddCors(options =>
@@ -165,35 +150,54 @@ namespace Contacting.API
         }
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
+            var accountName = configuration.GetValue<string>("AzureStorageAccountName");
+            var accountKey = configuration.GetValue<string>("AzureStorageAccountKey");
+
             var hcBuilder = services.AddHealthChecks();
 
             hcBuilder
                 .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddSqlServer(
                     configuration["ConnectionString"],
-                    name: "ContactingDB-check",
-                    tags: new string[] { "ContactingDb" });
+                    name: "ReportingDB-check",
+                    tags: new string[] { "reportingdb" });
 
-            hcBuilder
-                .AddRabbitMQ(
-                    $"amqp://{configuration["EventBusConnection"]}",
-                    name: "contacting-rabbitmqbus-check",
-                    tags: new string[] { "rabbitmqbus" });
+            if (!string.IsNullOrEmpty(accountName) && !string.IsNullOrEmpty(accountKey))
+            {
+                hcBuilder
+                    .AddAzureBlobStorage(
+                        $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix=core.windows.net",
+                        name: "reporting-storage-check",
+                        tags: new string[] { "reportingstorage" });
+            }
+
+            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+            {
+                hcBuilder
+                    .AddAzureServiceBusTopic(
+                        configuration["EventBusConnection"],
+                        topicName: "reporting_event_bus",
+                        name: "reporting-servicebus-check",
+                        tags: new string[] { "servicebus" });
+            }
+            else
+            {
+                hcBuilder
+                    .AddRabbitMQ(
+                        $"amqp://{configuration["EventBusConnection"]}",
+                        name: "reporting-rabbitmqbus-check",
+                        tags: new string[] { "rabbitmqbus" });
+            }
 
             return services;
         }
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddEntityFrameworkSqlServer()
-                .AddDbContext<ContactingContext>(options =>
-                {
-                    options.UseNpgsql(configuration["ConnectionString"],
-                                    npgsqlOptionsAction: sqlOptions =>
-                                     {
-                                         sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
-                                         sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorCodesToAdd: null);
-                                     }).UseSnakeCaseNamingConvention();
-                });
+            services.AddScoped<IReportingDbContext, ReportingDbContext>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            MongoDbPersistence.Configure();
+
             return services;
         }
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
@@ -218,9 +222,9 @@ namespace Contacting.API
 
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Contacting - Contacting HTTP API",
+                    Title = "Reporting - Reporting HTTP API",
                     Version = "v1",
-                    Description = "The Contacting Service HTTP API"
+                    Description = "The Reporting Service HTTP API"
                 });
                 options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
@@ -233,7 +237,7 @@ namespace Contacting.API
                             TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
                             Scopes = new Dictionary<string, string>()
                             {
-                                { "contacting", "Contacting API" }
+                                { "reporting", "Reporting API" }
                             }
                         }
                     }
@@ -246,7 +250,7 @@ namespace Contacting.API
         }
         public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<IContactingIntegrationEventService, ContactingIntegrationEventService>();
+            services.AddTransient<IReportingIntegrationEventService, ReportingIntegrationEventService>();
 
             return services;
         }
@@ -266,18 +270,18 @@ namespace Contacting.API
             {
                 options.Authority = identityUrl;
                 options.RequireHttpsMetadata = false;
-                options.Audience = "contacting";
+                options.Audience = "reporting";
             });
 
             return services;
         }
+
         public static IServiceCollection AddCap(this IServiceCollection services, IConfiguration configuration)
         {
-
             services.AddCap(x =>
             {
-                x.DefaultGroupName = "contacting";
-                x.UsePostgreSql(configuration["ConnectionString"]);
+                x.DefaultGroupName = "reporting";
+                x.UseMongoDB(configuration["MongoSettings:Connection"]);
                 x.UseRabbitMQ(configuration["EventBusConnection"]);
 
                 // Register Dashboard
@@ -286,9 +290,7 @@ namespace Contacting.API
 
             return services;
         }
-        public static IServiceCollection AddIntegrationEventHandler(this IServiceCollection services)
-        {
-            return services;
-        }
     }
+
 }
+
