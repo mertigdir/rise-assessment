@@ -65,7 +65,7 @@ namespace Contacting.Infrastructure
             foreach (var person in persons)
             {
                 context.PersonContacts.Add(new PersonContact(Guid.NewGuid(), person.Id, ContactType.Email, faker.Internet.Email()));
-                context.PersonContacts.Add(new PersonContact(Guid.NewGuid(), person.Id, ContactType.Location, faker.Address.FullAddress()));
+                context.PersonContacts.Add(new PersonContact(Guid.NewGuid(), person.Id, ContactType.Location, faker.Address.City()));
                 context.PersonContacts.Add(new PersonContact(Guid.NewGuid(), person.Id, ContactType.Phone, faker.Phone.PhoneNumber()));
             }
 
