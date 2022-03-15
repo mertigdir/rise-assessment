@@ -1,0 +1,91 @@
+version: '3.4'
+
+services:
+  seq:
+    environment:
+     - ACCEPT_EULA=Y
+    ports:
+     - "5340:80"
+
+  sqldata:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+    volumes:
+      - liveauction-sqldata:/var/opt/mssql
+
+  rabbitmq:
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  identity.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80,
+      - ConnectionString=Server=sqldata;Database=IdentityDb;User Id=sa;Password=Pass@word
+    ports:
+      - "5100:80"
+
+
+  auction.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionString=Server=sqldata;Database=AuctionDb;User Id=sa;Password=Pass@word
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
+      - GRPC_PORT=81
+      - PORT=80
+      - PATH_BASE=/auction-api
+    ports:
+      - "5101:80"
+
+  bidding.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5102:80"
+
+  location.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+     - "5103:80"
+
+  ordering.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+     - "5104:80"
+
+  product.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+     - "5105:80"
+
+  streaming.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+     - "5106:80"
+
+
+  webhooks.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5107:80"
+
+volumes:
+  liveauction-sqldata:
+    external: false
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+﻿AuctionMigrations --->
+
+select Contacting.API 
+select Contacting.API from package console
+Add-Migration Initial -context Contacting.Infrastructure.ContactingContext -o Infrastructure\Migrations
+
+
