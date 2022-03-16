@@ -11,6 +11,8 @@ using Reporting.API.Infrastructure;
 using Reporting.MongoDb.Shared;
 using Reporting.Core.Models.Reports;
 using Reporting.Core.Shared.Reports;
+using Reporting.Application.Reports;
+using Reporting.Application.Shared.Reports.Dto;
 
 namespace Reporting.API.Controllers
 {
@@ -19,26 +21,32 @@ namespace Reporting.API.Controllers
     public class ReportController : ControllerBase
     {
         private readonly ILogger<ReportController> _logger;
-        private readonly IRepository<Report> _reportRepository;
+        private readonly IReportAppService _reportAppService;
 
-        public ReportController(ILogger<ReportController> logger, IRepository<Report> reportRepository)
+        public ReportController(IReportAppService reportAppService, ILogger<ReportController> logger)
         {
+            _reportAppService = reportAppService;
             _logger = logger;
-            _reportRepository = reportRepository;
         }
 
 
-        [Route("deneme")]
-        [HttpPost]
-        public async Task<IActionResult> deneme()
+        [HttpPut]
+        public async Task<IActionResult> CreateReportAsync()
         {
-            _reportRepository.Add(new Report()
-            {
-                RequestDate = DateTime.Now,
-                State = ReportState.InProcess,
-            });
-
+            await _reportAppService.CreateReportRequestAsync();
             return Ok();
         }
+
+
+        [Route("list")]
+        [HttpGet]
+        [ProducesResponseType(typeof(List<ReportDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetLocationList()
+        {
+            var reports = await _reportAppService.GetReports();
+            return Ok(reports);
+        }
+
     }
 }

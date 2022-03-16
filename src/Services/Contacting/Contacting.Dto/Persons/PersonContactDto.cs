@@ -1,9 +1,6 @@
-﻿using Contacting.Domain.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Contacting.Domain.SeedWork;
-using Contacting.Domain.Events;
 using Contacting.Domain.Shared.Persons;
 
 namespace Contacting.Dto.Persons

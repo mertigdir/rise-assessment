@@ -7,5 +7,6 @@ namespace Reporting.MongoDb.Shared
     public interface IUnitOfWork : IDisposable
     {
         Task CommitAsync();
+        Task SaveChangesAsync();
     }
 }

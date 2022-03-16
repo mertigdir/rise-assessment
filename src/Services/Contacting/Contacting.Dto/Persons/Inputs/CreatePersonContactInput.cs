@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Contacting.API.Models.Persons
+namespace Contacting.Dto.Persons.Inputs
 {
     public class CreatePersonContactInput
     {

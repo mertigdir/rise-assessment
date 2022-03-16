@@ -10,7 +10,24 @@ namespace Reporting.Core.Models.Reports
 {
     public class Report : Entity, IAggregateRoot
     {
-        public DateTime RequestDate { get; set; }
-        public ReportState State { get; set; }
+
+        public Report(DateTime requestDate)
+        {
+            RequestDate = requestDate;
+            State = ReportState.InProcess;
+        }
+
+        public DateTime RequestDate { get; protected set; }
+        public ReportState State { get; protected set; }
+        public string FileUrl { get; protected set; }
+
+
+
+        public void ReportPrepared(string fileUrl)
+        {
+            State = ReportState.Completed;
+            FileUrl = fileUrl;
+        }
+
     }
 }

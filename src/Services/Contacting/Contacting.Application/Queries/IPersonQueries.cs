@@ -1,6 +1,5 @@
 
 ﻿using Contacting.Dto.Persons;
-﻿using Contacting.Dto.Auctions;
 using Contacting.Dto.Persons.Reports;
 using System;
 using System.Collections.Generic;

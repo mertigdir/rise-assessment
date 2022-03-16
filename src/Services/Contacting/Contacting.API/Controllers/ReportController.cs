@@ -18,12 +18,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
 using Utility.Extensions;
-using Contacting.Dto.Auctions;
 using Contacting.Application.IntegrationEvents.Events;
 using DotNetCore.CAP;
 using Autofac;
 using Contacting.Dto.Persons.Inputs;
-using Contacting.API.Models.Persons;
 using Contacting.Dto.Persons.Reports;
 
 namespace Services.Contacting.API.Controllers

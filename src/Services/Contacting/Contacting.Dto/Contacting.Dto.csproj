@@ -10,7 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Contacting.Domain\Contacting.Domain.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Utility\Utility.csproj" />
+    <ProjectReference Include="..\Contacting.Core\Contacting.Domain.Shared.csproj" />
   </ItemGroup>
+
 
 </Project>

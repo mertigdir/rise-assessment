@@ -1,6 +1,5 @@
 ﻿using Contacting.Application.IntegrationEvents;
 using Contacting.Application.IntegrationEvents.Events;
-using Contacting.Domain.Auctions;
 using Contacting.Domain.Persons;
 using Contacting.Domain.SeedWork;
 using Contacting.Infrastructure.Idempotency;

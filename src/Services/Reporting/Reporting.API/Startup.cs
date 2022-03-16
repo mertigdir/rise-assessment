@@ -31,6 +31,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Reporting.MongoDb.Shared;
 using Reporting.API.Infrastructure.AutofacModules;
+using Utility.RabbimMQ;
+using RabbitMQ.Client;
+using Reporting.Application.Services;
+using Reporting.API.BackgroundServices;
+using Refit;
+using Reporting.Application.Mapper;
 
 namespace Reporting.API
 {
@@ -53,11 +59,15 @@ namespace Reporting.API
                .AddCustomMVC(Configuration)
                .AddCustomDbContext(Configuration)
                .AddCap(Configuration)
+               .AddRabbitMQ(Configuration)
                .AddCustomSwagger(Configuration)
                .AddCustomOptions(Configuration)
                .AddIntegrationServices(Configuration)
                .AddCustomHealthCheck(Configuration)
-               .AddCustomAuthentication(Configuration);
+               .AddCustomAuthentication(Configuration)
+               .AddBackgroundServices(Configuration)
+               .AddApiClients(Configuration)
+               .AddCustomAutoMapper(Configuration);
 
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
@@ -292,7 +302,36 @@ namespace Reporting.API
 
             return services;
         }
-    }
 
+        public static IServiceCollection AddRabbitMQ(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSingleton<RabbitMQClientService>();
+            services.AddSingleton(sp => new ConnectionFactory() { Uri = new Uri($"amqp://guest:guest@{configuration["EventBusConnection"]}:5672"), DispatchConsumersAsync = true });
+
+            return services;
+        }
+
+
+        public static IServiceCollection AddApiClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            services
+            .AddRefitClient<IReportApiClient>()
+            .ConfigureHttpClient(c => c.BaseAddress = new Uri($"{configuration["ContactingServiceUrl"]}/api/v1/report"));
+
+            services
+            .AddRefitClient<IPersonApiClient>()
+            .ConfigureHttpClient(c => c.BaseAddress = new Uri($"{configuration["ContactingServiceUrl"]}/api/v1/person"));
+
+            return services;
+        }
+
+        public static IServiceCollection AddBackgroundServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHostedService<ReportCreatedHostedService>();
+
+            return services;
+        }
+
+    }
 }
 

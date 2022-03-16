@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Reporting.MongoDb.Shared;
+using MongoDB.Bson;
 
 namespace Reporting.MongoDb.Repositories
 {
@@ -26,7 +27,7 @@ namespace Reporting.MongoDb.Repositories
             Context.AddCommand(() => DbSet.InsertOneAsync(Context.Session, obj), obj);
         }
 
-        public virtual async Task<TEntity> GetById(Guid id)
+        public virtual async Task<TEntity> GetById(ObjectId id)
         {
             var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq("_id", id));
             return data.SingleOrDefault();
@@ -43,7 +44,7 @@ namespace Reporting.MongoDb.Repositories
             Context.AddCommand(() => DbSet.ReplaceOneAsync(Context.Session,Builders<TEntity>.Filter.Eq("_id", obj.GetId()), obj), obj);
         }
 
-        public virtual void Remove(Guid id)
+        public virtual void Remove(ObjectId id)
         {
             Context.AddCommand(() => DbSet.DeleteOneAsync(Context.Session,Builders<TEntity>.Filter.Eq("_id", id)), null);
         }

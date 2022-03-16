@@ -11,8 +11,10 @@ namespace Reporting.MongoDb
         IClientSessionHandle Session { get; }
         void AddCommand(Func<Task> func, object entity);
         Task CommitAsync();
+        Task SaveChangesAsync();
         void CreateTransaction();
         IMongoCollection<T> GetCollection<T>(string name);
+
 
     }
 }

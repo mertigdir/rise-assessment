@@ -23,7 +23,6 @@ using DotNetCore.CAP;
 using Autofac;
 using Contacting.Dto.Persons.Inputs;
 using Contacting.Dto.Persons;
-using Contacting.API.Models.Persons;
 
 namespace Services.Contacting.API.Controllers
 {
@@ -70,14 +69,18 @@ namespace Services.Contacting.API.Controllers
         [HttpPut]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreatePersonAsync([FromBody] CreatePersonCommand command)
+        public async Task<IActionResult> CreatePersonAsync([FromBody] CreatePersonInput input)
         {
             bool commandResult = false;
+
+            var command = new CreatePersonCommand(input.Name, input.Surname, input.Company);
 
             _logger.LogInformation(
                 "----- Sending command: {CommandName}",
                 command.GetGenericTypeName(),
                 command);
+
+
 
             commandResult = await _mediator.Send(command);
 

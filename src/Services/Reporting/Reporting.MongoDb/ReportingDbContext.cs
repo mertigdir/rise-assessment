@@ -31,14 +31,12 @@ namespace Reporting.MongoDb
             CreateMongoClient();
         }
 
-        private async Task<int> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
             var commandTasks = _commands.Where(x => x.Function != null).Select(c => c.Function());
             await Task.WhenAll(commandTasks);
 
             _commands.Clear();
-
-            return _commands.Count;
         }
 
         public async Task CommitAsync()

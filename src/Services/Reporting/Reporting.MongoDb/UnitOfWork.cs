@@ -25,5 +25,9 @@ namespace Reporting.MongoDb
             _context.Dispose();
         }
 
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }
