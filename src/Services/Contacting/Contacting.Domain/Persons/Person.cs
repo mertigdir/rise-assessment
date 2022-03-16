@@ -26,5 +26,16 @@ namespace Contacting.Domain.Persons
         public string Company { get; protected set; }
 
         public ICollection<PersonContact> Contacts { get; protected set; }
+
+        public void DeleteContact(Guid contactId)
+        {
+            var contact = Contacts.First(x => x.Id == contactId);
+            this.Contacts.Remove(contact);
+        }
+
+        public void AddContact(PersonContact contact)
+        {
+            this.Contacts.Add(contact);
+        }
     }
 }

@@ -23,6 +23,7 @@ using DotNetCore.CAP;
 using Autofac;
 using Contacting.Dto.Persons.Inputs;
 using Contacting.Dto.Persons;
+using Contacting.API.Models.Persons;
 
 namespace Services.Contacting.API.Controllers
 {
@@ -47,8 +48,7 @@ namespace Services.Contacting.API.Controllers
 
         }
 
-
-        [Route("getPersons")]
+        [Route("list")]
         [HttpGet]
         [ProducesResponseType(typeof(List<PersonDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -58,12 +58,10 @@ namespace Services.Contacting.API.Controllers
             return Ok(persons);
         }
 
-
-        [Route("getPersonWithContacts")]
-        [HttpGet]
+        [HttpGet("{personId}")]
         [ProducesResponseType(typeof(PersonDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetPersonWithContacts(Guid personId)
+        public async Task<IActionResult> GetPersonWithContactsAsync(Guid personId)
         {
             var person = await _personQueries.GetPersonWithContactsAsync(personId);
             return Ok(person);
@@ -86,5 +84,62 @@ namespace Services.Contacting.API.Controllers
             return Ok(commandResult);
         }
 
+        [HttpDelete("{personId}")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeletePersonAsync(Guid personId)
+        {
+            bool commandResult = false;
+
+            var command = new DeletePersonCommand(personId);
+
+            _logger.LogInformation(
+                "----- Sending command: {CommandName}",
+                command.GetGenericTypeName(),
+                command);
+
+            commandResult = await _mediator.Send(command);
+
+            return Ok(commandResult);
+        }
+
+
+        [HttpDelete("{personId}/person-contact/{personContactId}")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeletePersonContactAsync(Guid personId, Guid personContactId)
+        {
+            bool commandResult = false;
+
+            var command = new DeletePersonContactCommand(personId, personContactId);
+
+            _logger.LogInformation(
+                "----- Sending command: {CommandName}",
+                command.GetGenericTypeName(),
+                command);
+
+            commandResult = await _mediator.Send(command);
+
+            return Ok(commandResult);
+        }
+
+        [HttpPut("{personId}/person-contact")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CreatPersonContactAsync(Guid personId, [FromBody] CreatePersonContactInput input)
+        {
+            bool commandResult = false;
+
+            var command = new CreatePersonContactCommand(personId, input.ContactType, input.Content);
+
+            _logger.LogInformation(
+                "----- Sending command: {CommandName}",
+                command.GetGenericTypeName(),
+                command);
+
+            commandResult = await _mediator.Send(command);
+
+            return Ok(commandResult);
+        }
     }
 }

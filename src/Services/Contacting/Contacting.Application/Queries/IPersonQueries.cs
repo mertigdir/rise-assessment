@@ -1,4 +1,7 @@
+
 ﻿using Contacting.Dto.Persons;
+﻿using Contacting.Dto.Auctions;
+using Contacting.Dto.Persons.Reports;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,6 +21,8 @@ namespace Contacting.Application.Queries
              int take = 10
              );
         Task<PersonDto> GetPersonWithContactsAsync(Guid id);
+
+        Task<List<LocationReport>> GetLocationReportAsync();
 
     }
 }

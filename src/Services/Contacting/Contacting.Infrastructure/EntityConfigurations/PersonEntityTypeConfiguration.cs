@@ -28,6 +28,8 @@ namespace Contacting.Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.PersonId)
                 .IsRequired();
 
+            configuration.Navigation(x => x.Contacts).AutoInclude();
+
         }
     }
 }

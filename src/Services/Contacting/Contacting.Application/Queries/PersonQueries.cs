@@ -1,7 +1,10 @@
+
 ﻿using Contacting.Dto.Persons;
+using Contacting.Dto.Persons.Reports;
 using Dapper;
 using Npgsql;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Utility.Paginations;
@@ -16,6 +19,7 @@ namespace Contacting.Application.Queries
         {
             _connectionString = !string.IsNullOrWhiteSpace(constr) ? constr : throw new ArgumentNullException(nameof(constr));
         }
+
 
         public async Task<PaginationResult<PersonDto>> GetPersonsAsync(
             Guid? id = null,
@@ -98,6 +102,35 @@ namespace Contacting.Application.Queries
                     person.Contacts = (await multi.ReadAsync<PersonContactDto>()).ToList();
 
                 return person;
+            }
+        }
+
+
+        public async Task<List<LocationReport>> GetLocationReportAsync()
+        {
+            using (var connection = new NpgsqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                string templateQuery = @"
+                                         SELECT content as location,
+	                                     COUNT(DISTINCT person_id) as person_count,
+	                                     (
+		                                     SELECT SUM(t.phoneCount) as phone_count FROM (
+										                                     SELECT (
+										                                        SELECT SUM(phoneCounts.phoneCount) FROM 
+										                                            (
+										                                                SELECT COUNT(DISTINCT content) as phoneCount FROM contacting.personcontacts as b WHERE b.contact_type=1 and b.person_id=a.person_id GROUP BY content
+										                                            ) as phoneCounts
+										                                        ) as phoneCount
+										                                     FROM contacting.personcontacts as a WHERE a.content=dis.content GROUP BY person_id
+									                                       ) AS t
+	                                     )
+	                                     FROM contacting.personcontacts as dis WHERE contact_type=3 GROUP BY content";
+
+                var result = await connection.QueryAsync<LocationReport>(templateQuery);
+
+                return result.ToList();
             }
         }
     }

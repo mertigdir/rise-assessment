@@ -28,7 +28,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Contacting.Domain.Shared;
 using Contacting.Application.Mapper;
 using Utility;
-
+using Contacting.Domain.Shared.Persons;
 namespace Contacting.API
 {
     public class Startup
@@ -55,7 +55,8 @@ namespace Contacting.API
                .AddIntegrationServices(Configuration)
                .AddCustomHealthCheck(Configuration)
                .AddCustomAuthentication(Configuration)
-               .AddCustomAutoMapper(Configuration);
+               .AddCustomAutoMapper(Configuration)
+               .AddDapper();
 
 
             var containerBuilder = new ContainerBuilder();
@@ -290,5 +291,13 @@ namespace Contacting.API
         {
             return services;
         }
+
+        public static IServiceCollection AddDapper(this IServiceCollection services)
+        {
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
+            return services;
+        }
+
     }
 }
