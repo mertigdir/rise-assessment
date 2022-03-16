@@ -25,10 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Contacting.API\Contacting.API.csproj" />
-    <ProjectReference Include="..\..\Contacting.Application\Contacting.Application.csproj" />
-    <ProjectReference Include="..\..\Contacting.Domain\Contacting.Domain.csproj" />
-    <ProjectReference Include="..\..\Contacting.Infrastructure\Contacting.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Reporting.Application\Reporting.Application.csproj" />
   </ItemGroup>
 
 </Project>

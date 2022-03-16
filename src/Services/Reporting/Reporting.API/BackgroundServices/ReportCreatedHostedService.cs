@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -75,7 +76,7 @@ namespace Reporting.API.BackgroundServices
 
                     var reportAppService = _lifetimeScope.Resolve<IReportAppService>();
 
-                    await reportAppService.CreateReportAsync(result.ReportId);
+                    await reportAppService.CreateReportAsync(new ObjectId(result.ReportId));
 
                     await uow.CommitAsync();
 

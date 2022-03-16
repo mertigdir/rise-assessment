@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MongoDB.Bson" Version="2.14.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\Utility\Utility.csproj" />
     <ProjectReference Include="..\Reporting.Core.Shared\Reporting.Core.Shared.csproj" />
   </ItemGroup>

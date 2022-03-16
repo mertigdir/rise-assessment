@@ -1,4 +1,5 @@
-﻿using Reporting.Application.Shared.Reports.Dto;
+﻿using MongoDB.Bson;
+using Reporting.Application.Shared.Reports.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Reporting.Application.Reports
     public interface IReportAppService : ITransientDependency
     {
         Task CreateReportRequestAsync();
-        Task CreateReportAsync(string id);
+        Task<string> CreateReportAsync(ObjectId id);
         Task<List<ReportDto>> GetReports();
     }
 }
