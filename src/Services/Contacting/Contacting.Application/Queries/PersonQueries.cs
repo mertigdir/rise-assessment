@@ -1,5 +1,5 @@
-﻿using Contacting.Domain.Auctions;
-using Contacting.Dto.Auctions;
+
+﻿using Contacting.Dto.Persons;
 using Contacting.Dto.Persons.Reports;
 using Dapper;
 using Npgsql;

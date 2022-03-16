@@ -1,0 +1,9 @@
+﻿namespace Reporting.Core.Shared
+{
+    public class AppSettings
+    {
+        public string ServiceName { get; set; }
+        public string ApplicationUrl { get; set; }
+        public string EventBusConnection { get; set; }
+    }
+}

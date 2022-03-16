@@ -18,11 +18,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
 using Utility.Extensions;
-using Contacting.Dto.Auctions;
 using Contacting.Application.IntegrationEvents.Events;
 using DotNetCore.CAP;
 using Autofac;
 using Contacting.Dto.Persons.Inputs;
+using Contacting.Dto.Persons;
 using Contacting.API.Models.Persons;
 
 namespace Services.Contacting.API.Controllers
@@ -63,8 +63,8 @@ namespace Services.Contacting.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetPersonWithContactsAsync(Guid personId)
         {
-            var auction = await _personQueries.GetPersonWithContactsAsync(personId);
-            return Ok(auction);
+            var person = await _personQueries.GetPersonWithContactsAsync(personId);
+            return Ok(person);
         }
 
         [HttpPut]

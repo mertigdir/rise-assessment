@@ -10,10 +10,6 @@ namespace Contacting.Domain.Shared
         {
             _settings = settings;
         }
-
-        public static string GetFrontendAuctionUrl()
-        {
-            return _settings.FrontendAuctionUrl;
-        }
+      
     }
 }

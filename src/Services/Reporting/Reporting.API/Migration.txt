@@ -1,0 +1,1 @@
+﻿dotnet ef --startup-project Reporting.Api/Reporting.Api.csproj migrations add Initial -p Reporting.Data/Reporting.Data.csproj

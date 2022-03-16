@@ -113,7 +113,7 @@ namespace Contacting.API
              .UseSwaggerUI(c =>
              {
                  c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Contacting.API V1");
-                 c.OAuthClientId("auctioningswaggerui");
+                 c.OAuthClientId("contactingswaggerui");
                  c.OAuthAppName("Contacting Swagger UI");
              });
 
@@ -175,11 +175,11 @@ namespace Contacting.API
                     name: "ContactingDB-check",
                     tags: new string[] { "ContactingDb" });
 
-                hcBuilder
-                    .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
-                        name: "contacting-rabbitmqbus-check",
-                        tags: new string[] { "rabbitmqbus" });
+            hcBuilder
+                .AddRabbitMQ(
+                    $"amqp://{configuration["EventBusConnection"]}",
+                    name: "contacting-rabbitmqbus-check",
+                    tags: new string[] { "rabbitmqbus" });
 
             return services;
         }

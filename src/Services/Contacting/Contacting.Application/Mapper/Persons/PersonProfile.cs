@@ -1,11 +1,6 @@
-﻿using Contacting.Application.IntegrationEvents.Events;
-using Contacting.Domain.Auctions;
-using Contacting.Dto.Auctions;
-using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using AutoMapper;
 using Contacting.Domain.Persons;
+using Contacting.Dto.Persons;
 
 namespace Contacting.Application.Mapper.Persons
 {

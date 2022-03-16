@@ -16,7 +16,7 @@ namespace Contacting.Application.Behaviors
     {
         private readonly ILogger<TransactionBehaviour<TRequest, TResponse>> _logger;
         private readonly ContactingContext _dbContext;
-        private readonly IContactingIntegrationEventService _auctioningIntegrationEventService;
+        private readonly IContactingIntegrationEventService _contactingIntegrationEventService;
         private readonly ICapPublisher _capBus;
 
         public TransactionBehaviour(ContactingContext dbContext,
@@ -25,7 +25,7 @@ namespace Contacting.Application.Behaviors
             ILogger<TransactionBehaviour<TRequest, TResponse>> logger)
         {
             _dbContext = dbContext ?? throw new ArgumentException(nameof(ContactingContext));
-            _auctioningIntegrationEventService = orderingIntegrationEventService ?? throw new ArgumentException(nameof(orderingIntegrationEventService));
+            _contactingIntegrationEventService = orderingIntegrationEventService ?? throw new ArgumentException(nameof(orderingIntegrationEventService));
             _capBus = capBus;
             _logger = logger ?? throw new ArgumentException(nameof(ILogger));
         }
