@@ -59,10 +59,10 @@ PostgreSQL 13.2  veya üstü
 Git'den proje çekildikten sonra yapılması gerekenler
 
 **Contacting**
-1. Contacting.API projesinin altındaki appsettings dosyaları içindeki ConnectionString değerine veritabanı connection bilgileri ve EventBusConnection değerine rabbitmq connection bilgileri yazılmalı
+1. Contacting.API projesinin altındaki appsettings dosyaları içindeki ConnectionString değerine veritabanı connection bilgileri ve EventBusConnection değerine rabbitmq host bilgileri yazılmalı
 
 **Reporting**
-1. Reporting.API projesinin altındaki appsettings dosyaları içindeki ConnectionString değerine veritabanı connection bilgileri ve EventBusConnection değerine rabbitmq connection bilgileri yazılmalı
+1. Reporting.API projesinin altındaki appsettings dosyaları içindeki ConnectionString değerine veritabanı connection bilgileri ve EventBusConnection değerine rabbitmq host bilgileri yazılmalı
 
 2. MongoDb configurasyon dosyasında aşağıdaki replikasyon ayarı yapılmalı  
 Not* Transaction işlemleri için gerekli
