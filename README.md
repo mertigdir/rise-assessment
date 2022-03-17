@@ -1,14 +1,12 @@
 
 
   <h3 align="center">RISE ASSESSMENT</h3>
-  
+    <br/>
+    <br/>
 
     BAŞLAMA TARİHİ : 14.07.2022
     BİTİŞ TARİHİ   : 17.03.2022
-  <br/>
-  <br/>
- <br/>
-  <br/>
+
 
 
 # Proje Hakkında
