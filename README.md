@@ -66,7 +66,7 @@ Git'den proje çekildikten sonra yapılması gerekenler
 **Reporting**
 1. Reporting.API projesinin altındaki appsettings dosyaları içindeki ConnectionString değerine veritabanı connection bilgileri ve EventBusConnection değerine rabbitmq host bilgileri yazılmalı
 
-2. MongoDb configurasyon dosyasında aşağıdaki replikasyon ayarı yapılmalı  
+2. MongoDb configurasyon dosyasında aşağıdaki replika ayarı yapılmalı  
 Not* Transaction işlemleri için gerekli
 > replication:
    replSetName: "kumeAdi"
